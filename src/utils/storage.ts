@@ -1,6 +1,7 @@
 import type { Node, Edge } from '@xyflow/react';
 
-const STORAGE_KEY = 'react-flow-graph-state';
+const NODES_STORAGE_KEY = 'react-flow-nodes';
+const EDGES_STORAGE_KEY = 'react-flow-edges';
 
 export interface GraphState {
   nodes: Node[];
@@ -8,25 +9,35 @@ export interface GraphState {
   timestamp: number;
 }
 
-export const saveGraphState = (nodes: Node[], edges: Edge[]): void => {
+export const saveNodes = (nodes: Node[]): void => {
   try {
-    const state: GraphState = {
-      nodes,
-      edges,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(NODES_STORAGE_KEY, JSON.stringify(nodes));
   } catch (error) {
-    console.error('Failed to save graph state:', error);
+    console.error('Failed to save nodes:', error);
+  }
+};
+
+export const saveEdges = (edges: Edge[]): void => {
+  try {
+    localStorage.setItem(EDGES_STORAGE_KEY, JSON.stringify(edges));
+  } catch (error) {
+    console.error('Failed to save edges:', error);
   }
 };
 
 export const loadGraphState = (): GraphState | null => {
   try {
-    const storedState = localStorage.getItem(STORAGE_KEY);
-    if (!storedState) return null;
-    
-    const state: GraphState = JSON.parse(storedState);
+    const storedNodes = localStorage.getItem(NODES_STORAGE_KEY);
+    const storedEdges = localStorage.getItem(EDGES_STORAGE_KEY);
+
+    if (!storedNodes && !storedEdges) return null;
+
+    const state: GraphState = {
+      nodes: storedNodes ? JSON.parse(storedNodes) : [],
+      edges: storedEdges ? JSON.parse(storedEdges) : [],
+      timestamp: Date.now(),
+    };
+
     return state;
   } catch (error) {
     console.error('Failed to load graph state:', error);
@@ -36,7 +47,8 @@ export const loadGraphState = (): GraphState | null => {
 
 export const clearGraphState = (): void => {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(NODES_STORAGE_KEY);
+    localStorage.removeItem(EDGES_STORAGE_KEY);
   } catch (error) {
     console.error('Failed to clear graph state:', error);
   }
@@ -47,9 +59,9 @@ export const debounce = <T extends (...args: any[]) => void>(
   delay: number
 ): ((...args: Parameters<T>) => void) => {
   let timeoutId: ReturnType<typeof setTimeout>;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
   };
-}; 
+};

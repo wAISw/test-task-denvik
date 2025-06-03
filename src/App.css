@@ -24,7 +24,7 @@
 }
 
 .panel-button-primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border-color: #45a049;
 }
@@ -44,7 +44,7 @@
 }
 
 .save-indicator {
-  color: #4CAF50;
+  color: #4caf50;
   font-size: 14px;
   font-weight: 500;
   animation: fadeIn 0.3s ease-in;
@@ -57,4 +57,4 @@
   to {
     opacity: 1;
   }
-} 
+}
